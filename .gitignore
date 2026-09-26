@@ -1,0 +1,18 @@
+# Downloaded option quotes. A snapshot is a few hundred kilobytes and is
+# reproducible in a few seconds with:
+#     python scripts/download_surface.py
+# The study runs offline from the cache, and `--synthetic` runs it with no cache
+# at all, which is how continuous integration runs it.
+data/cache/
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.DS_Store

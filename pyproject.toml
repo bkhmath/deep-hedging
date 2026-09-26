@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deep-hedging"
+version = "1.0.0"
+description = "Deep hedging of a European call under proportional transaction costs, validated against closed forms"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "bkhmath" }]
+keywords = ["quantitative-finance", "deep-hedging", "stochastic-volatility", "risk-measures", "heston"]
+
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.1",
+    "pyarrow>=14",
+    "matplotlib>=3.8",
+    # CPU wheels are enough: the networks are a few thousand parameters and the
+    # cost is dominated by unrolling thirty sequential decisions, not by matrix
+    # multiplication. CI installs the CPU build explicitly.
+    "torch>=2.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "ruff>=0.4"]
+
+[project.urls]
+Repository = "https://github.com/bkhmath/deep-hedging"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --strict-markers"
+# A RuntimeWarning in this codebase is almost always a divide-by-zero or an
+# overflow in a formula that should have handled the degenerate case, so it is
+# promoted to an error rather than printed and forgotten.
+filterwarnings = ["error::RuntimeWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+ignore = [
+    "E501",    # long lines are the formatter's business, not the linter's
+    "B008",
+    "RUF001",  # ambiguous unicode in prose docstrings
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011", "SLF001"]
